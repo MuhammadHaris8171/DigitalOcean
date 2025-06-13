@@ -52,7 +52,7 @@ jobs:
           cd frontend
           npm run build
 
-      # Add deployment steps here...
+      # Add deploy step...
 
       - name: Deploy code via SSH
         uses: appleboy/scp-action@v0.1.4
