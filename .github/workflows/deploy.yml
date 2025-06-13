@@ -45,8 +45,8 @@ jobs:
           cd backend
           npm install
 
-      # Deploy backend folder (includes frontend build) to server
-      - name: Deploy backend (with frontend build) via SSH
+      # Deploy backend folder to server
+      - name: Deploy backend via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
@@ -54,6 +54,17 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "backend/"
           target: "/root/gnr/backend"
+          strip_components: 1
+
+      # Deploy frontend build folder to server
+      - name: Deploy frontend build via SSH
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "frontend/build/"
+          target: "/root/gnr/build"
           strip_components: 1
 
       # Run backend with PM2 on server
