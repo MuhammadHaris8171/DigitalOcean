@@ -53,7 +53,6 @@ jobs:
           npm run build
 
       # Add deploy step...
-
       - name: Deploy code via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -71,7 +70,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /root/myapp/backend
-            pm2 stop server || true
-            pm2 start server.js --name my-backend
+            cd /root/gnr/backend
+            npm install
+            pm2 stop my-backend || true
+            pm2 start server.js --name api
             pm2 save
