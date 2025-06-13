@@ -5,7 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,29 +13,65 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Setup Node.js (Root)
         uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Setup Node.js (Frontend)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
         run: |
+          cd frontend
           npm install
-          cd frontend && npm install
-          cd ../backend && npm install
 
-      - name: Build frontend
+      - name: Setup Node.js (Backend)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Build Frontend
         run: |
           cd frontend
           npm run build
 
-      - name: Deploy to DigitalOcean via SSH
+      # Add deployment steps here...
+
+      - name: Deploy code via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target: "/root" # or wherever you want files copied
+          target: "/root/gnr"
           strip_components: 1
+
+      - name: Run server with PM2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /root/myapp/backend
+            pm2 stop server || true
+            pm2 start server.js --name my-backend
+            pm2 save
