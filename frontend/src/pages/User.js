@@ -5,7 +5,7 @@ import backend_url from '../config/config';
 const User = () => {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
-  // const [departments, setDepartments] = useState([]);
+  // const [departments, setDepartments] = useState([]) .;
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
