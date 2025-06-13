@@ -5,6 +5,7 @@ on:
     branches:
       - main
   workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,46 +14,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js (Root)
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
 
-      - name: Install Root Dependencies
-        run: npm install
-
-      - name: Setup Node.js (Frontend)
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install Frontend Dependencies
+      - name: Install Dependencies
         run: |
-          cd frontend
           npm install
-
-      - name: Setup Node.js (Backend)
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-
-      - name: Install Backend Dependencies
-        run: |
-          cd backend
-          npm install
+          cd frontend && npm install && cd ..
+          cd backend && npm install && cd ..
 
       - name: Build Frontend
         run: |
           cd frontend
           npm run build
 
-      # Add deploy step...
       - name: Deploy code via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -72,6 +50,6 @@ jobs:
           script: |
             cd /root/gnr/backend
             npm install
-            pm2 stop my-backend || true
+            pm2 stop api || true
             pm2 start server.js --name api
             pm2 save
