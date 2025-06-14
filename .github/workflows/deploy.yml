@@ -64,7 +64,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "frontend/build/"
-          target: "/root/gnr"
+          target: "/var/www/gnrcontrol"
           strip_components: 1
 
       # Run backend with PM2 on server
