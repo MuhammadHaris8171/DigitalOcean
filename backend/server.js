@@ -61,7 +61,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Root route to check API
+// Root route to checks API
 app.get('/', (req, res) => {
   res.json({ message: "API running successfully", status: "ok" });
 });
